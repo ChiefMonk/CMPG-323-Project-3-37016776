@@ -4,5 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Project3.DeviceManagement.Data\Project3.DeviceManagement.Data.csproj" />
+    <ProjectReference Include="..\Project3.DeviceManagement.Shared\Project3.DeviceManagement.Shared.csproj" />
+  </ItemGroup>
+
 
 </Project>
