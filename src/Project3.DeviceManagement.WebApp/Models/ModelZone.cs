@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
-
 namespace Project3.DeviceManagement.WebAPP.Models
 {
-    public partial class Zone
+    public class ModelZone
     {
-        public Zone()
+        public ModelZone()
         {
-            Device = new HashSet<Device>();
+            Device = new HashSet<ModelDevice>();
         }
 
         [DisplayName("Zone ID")]
@@ -28,6 +24,6 @@ namespace Project3.DeviceManagement.WebAPP.Models
         public DateTime DateCreated { get; set; }
 
         [DisplayName("Device")]
-        public virtual ICollection<Device> Device { get; set; }
+        public ICollection<ModelDevice> Device { get; set; }
     }
 }

@@ -1,12 +1,13 @@
-﻿@model Project3.DeviceManagement.WebAPP.Models.Zone
+﻿@model Project3.DeviceManagement.WebAPP.Models.ModelZone
 
 @{
     ViewData["Title"] = "Create Zone";
 }
 
 <h1>Create Zone</h1>
-
 <hr />
+<span class="text-danger">@TempData["ErrorMessage"]</span>
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">

@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project2.WebAPI.DAL.Converters;
+using Project3.DeviceManagement.Data.Exceptions;
 using Project3.DeviceManagement.Data.Repositories.Category;
-using Project3.DeviceManagement.Shared.Utils.Exceptions;
 using Project3.DeviceManagement.WebAPP.Models;
+using Project3.DeviceManagement.WebAPP.Models.Converters;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
@@ -24,15 +24,15 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	        try
 	        {
 		        var entityList = await _categoryRepository.GetAllCollectionAsync();
-		        return View(entityList.ToDtoCategoryCollection());
+		        return View(entityList.ToModelCategoryCollection());
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
         }
 
@@ -45,15 +45,15 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	        try
 	        {
 		        var category = await _categoryRepository.GetByIdAsync(id.Value);
-		        return View(category.ToDtoCategory());
+		        return View(category.ToModelCategory());
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 
         }
@@ -71,20 +71,20 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
 	        [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")]
-	        Category category)
+	        ModelCategory modelCategory)
         {
 	        try
 	        {
-		        await _categoryRepository.AddAsync(category.ToEntityCategory());
+		        await _categoryRepository.AddAsync(modelCategory.ToEntityCategory());
 		        return RedirectToAction(nameof(Index));
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
         }
 
@@ -96,16 +96,17 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 
 	        try
 	        {
-		        var category = await _categoryRepository.GetByIdAsync(id.Value);
-		        return View(category.ToDtoCategory());
+		        var category = await _categoryRepository.FindOneAsync(e => e.Id == id.Value);
+
+		        return View(category.ToModelCategory());
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
         }
 
@@ -115,23 +116,23 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id,
-	        [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")] Category category)
+	        [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")] ModelCategory modelCategory)
         {
-	        if (id != category.CategoryId)
+	        if (id != modelCategory.CategoryId)
 		        return NotFound();
 
 	        try
 	        {
-		        await _categoryRepository.UpdateAsync(category.ToEntityCategory());
+		        await _categoryRepository.UpdateAsync(modelCategory.ToEntityCategory());
 		        return RedirectToAction(nameof(Index));
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
         }
 
@@ -143,16 +144,16 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 
 	        try
 	        {
-		        var category = await _categoryRepository.GetByIdAsync(id.Value);
-		        return View(category.ToDtoCategory());
+		        var category = await _categoryRepository.FindOneAsync(e => e.Id == id.Value);
+		        return View(category.ToModelCategory());
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 
         }
@@ -172,11 +173,11 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	        }
 	        catch (MyWebApiException ex)
 	        {
-		        return StatusCode(ex.StatusCode, ex.Message);
+		        return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
 	        catch (Exception ex)
 	        {
-		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
 	        }
         }
     }

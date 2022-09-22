@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project3.DeviceManagement.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project3.DeviceManagement.Data", "Project3.DeviceManagement.Data\Project3.DeviceManagement.Data.csproj", "{A19D8459-3E00-4C9F-A547-AF6ACC712F29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project3.DeviceManagement.Shared", "Project3.DeviceManagement.Shared\Project3.DeviceManagement.Shared.csproj", "{15C296F1-01DB-4B5F-8E8D-2E12C1CC598E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{A19D8459-3E00-4C9F-A547-AF6ACC712F29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A19D8459-3E00-4C9F-A547-AF6ACC712F29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A19D8459-3E00-4C9F-A547-AF6ACC712F29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15C296F1-01DB-4B5F-8E8D-2E12C1CC598E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15C296F1-01DB-4B5F-8E8D-2E12C1CC598E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15C296F1-01DB-4B5F-8E8D-2E12C1CC598E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15C296F1-01DB-4B5F-8E8D-2E12C1CC598E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

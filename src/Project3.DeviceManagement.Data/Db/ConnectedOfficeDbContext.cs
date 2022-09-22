@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Project3.DeviceManagement.Data.Entities;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
@@ -8,65 +7,179 @@ using Project3.DeviceManagement.Data.Entities;
 
 namespace Project3.DeviceManagement.Data.Db
 {
-	/// <summary>
-	/// ConnectedOfficeDbContext class
-	/// </summary>
-	public class ConnectedOfficeDbContext : DbContext
+	public partial class ConnectedOfficeDbContext : DbContext
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ConnectedOfficeDbContext"/> class.
-		/// </summary>
-		/// <param name="options">The options.</param>
 		public ConnectedOfficeDbContext(DbContextOptions<ConnectedOfficeDbContext> options) : base(options)
 		{
 
 		}
 
-		/// <summary>
-		/// Gets or sets the category.
-		/// </summary>
-		/// <value>
-		/// The category.
-		/// </value>
+		public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
+		public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+		public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+		public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+		public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+		public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
+		public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
 		public virtual DbSet<EntityCategory> Category { get; set; }
-
-		/// <summary>
-		/// Gets or sets the device.
-		/// </summary>
-		/// <value>
-		/// The device.
-		/// </value>
 		public virtual DbSet<EntityDevice> Device { get; set; }
-
-		/// <summary>
-		/// Gets or sets the zone.
-		/// </summary>
-		/// <value>
-		/// The zone.
-		/// </value>
 		public virtual DbSet<EntityZone> Zone { get; set; }
 
 
-		/// <summary>
-		/// Override this method to further configure the model that was discovered by convention from the entity types
-		/// exposed in <see cref="T:Microsoft.EntityFrameworkCore.DbSet`1" /> properties on your derived context. The resulting model may be cached
-		/// and re-used for subsequent instances of your derived context.
-		/// </summary>
-		/// <param name="modelBuilder">The builder being used to construct the model for this context. Databases (and other extensions) typically
-		/// define extension methods on this object that allow you to configure aspects of the model that are specific
-		/// to a given database.</param>
-		/// <remarks>
-		/// If a model is explicitly set on the options for this context (via <see cref="M:Microsoft.EntityFrameworkCore.DbContextOptionsBuilder.UseModel(Microsoft.EntityFrameworkCore.Metadata.IModel)" />)
-		/// then this method will not be run.
-		/// </remarks>
-
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			base.OnModelCreating(modelBuilder);
+			modelBuilder.Entity<AspNetRoleClaims>(entity =>
+			{
+				entity.HasIndex(e => e.RoleId);
 
-			//modelBuilder.Ignore<EntityCategory>();
-			//modelBuilder.Ignore<EntityZone>();
-			//modelBuilder.Ignore<EntityDevice>();
+				entity.Property(e => e.RoleId).IsRequired();
+
+				entity.HasOne(d => d.Role)
+						.WithMany(p => p.AspNetRoleClaims)
+						.HasForeignKey(d => d.RoleId);
+			});
+
+			modelBuilder.Entity<AspNetRoles>(entity =>
+			{
+				entity.HasIndex(e => e.NormalizedName)
+						.HasName("RoleNameIndex")
+						.IsUnique()
+						.HasFilter("([NormalizedName] IS NOT NULL)");
+
+				entity.Property(e => e.Name).HasMaxLength(256);
+
+				entity.Property(e => e.NormalizedName).HasMaxLength(256);
+			});
+
+			modelBuilder.Entity<AspNetUserClaims>(entity =>
+			{
+				entity.HasIndex(e => e.UserId);
+
+				entity.Property(e => e.UserId).IsRequired();
+
+				entity.HasOne(d => d.User)
+						.WithMany(p => p.AspNetUserClaims)
+						.HasForeignKey(d => d.UserId);
+			});
+
+			modelBuilder.Entity<AspNetUserLogins>(entity =>
+			{
+				entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+				entity.HasIndex(e => e.UserId);
+
+				entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+				entity.Property(e => e.ProviderKey).HasMaxLength(128);
+
+				entity.Property(e => e.UserId).IsRequired();
+
+				entity.HasOne(d => d.User)
+						.WithMany(p => p.AspNetUserLogins)
+						.HasForeignKey(d => d.UserId);
+			});
+
+			modelBuilder.Entity<AspNetUserRoles>(entity =>
+			{
+				entity.HasKey(e => new { e.UserId, e.RoleId });
+
+				entity.HasIndex(e => e.RoleId);
+
+				entity.HasOne(d => d.Role)
+						.WithMany(p => p.AspNetUserRoles)
+						.HasForeignKey(d => d.RoleId);
+
+				entity.HasOne(d => d.User)
+						.WithMany(p => p.AspNetUserRoles)
+						.HasForeignKey(d => d.UserId);
+			});
+
+			modelBuilder.Entity<AspNetUserTokens>(entity =>
+			{
+				entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+				entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+				entity.Property(e => e.Name).HasMaxLength(128);
+
+				entity.HasOne(d => d.User)
+						.WithMany(p => p.AspNetUserTokens)
+						.HasForeignKey(d => d.UserId);
+			});
+
+			modelBuilder.Entity<AspNetUsers>(entity =>
+			{
+				entity.HasIndex(e => e.NormalizedEmail)
+						.HasName("EmailIndex");
+
+				entity.HasIndex(e => e.NormalizedUserName)
+						.HasName("UserNameIndex")
+						.IsUnique()
+						.HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+				entity.Property(e => e.Email).HasMaxLength(256);
+
+				entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+
+				entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+				entity.Property(e => e.UserName).HasMaxLength(256);
+			});
+
+			modelBuilder.Entity<EntityCategory>(entity =>
+			{
+				entity.Property(e => e.Id)
+						.HasColumnName("CategoryID")
+						.ValueGeneratedNever();
+
+				entity.Property(e => e.CategoryName).IsRequired();
+
+				entity.Property(e => e.DateCreated)
+						.HasColumnType("datetime")
+						.HasDefaultValueSql("(getdate())");
+			});
+
+			modelBuilder.Entity<EntityDevice>(entity =>
+			{
+				entity.Property(e => e.Id)
+						.HasColumnName("DeviceID")
+						.ValueGeneratedNever();
+
+				entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+
+				entity.Property(e => e.DateCreated)
+						.HasColumnType("datetime")
+						.HasDefaultValueSql("(getdate())");
+
+				entity.Property(e => e.ZoneId).HasColumnName("ZoneID");
+
+				entity.HasOne(d => d.Category)
+						.WithMany(p => p.Device)
+						.HasForeignKey(d => d.CategoryId)
+						.HasConstraintName("FK_Device_Category");
+
+				entity.HasOne(d => d.Zone)
+						.WithMany(p => p.Device)
+						.HasForeignKey(d => d.ZoneId)
+						.HasConstraintName("FK_Device_Zone");
+			});
+
+			modelBuilder.Entity<EntityZone>(entity =>
+			{
+				entity.Property(e => e.Id)
+						.HasColumnName("ZoneID")
+						.ValueGeneratedNever();
+
+				entity.Property(e => e.DateCreated)
+						.HasColumnType("datetime")
+						.HasDefaultValueSql("(getdate())");
+
+				entity.Property(e => e.ZoneName).IsRequired();
+			});
+
+			OnModelCreatingPartial(modelBuilder);
 		}
+
+		partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 	}
 }

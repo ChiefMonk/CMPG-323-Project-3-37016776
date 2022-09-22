@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Project3.DeviceManagement.Data.Entities;
-using Project3.DeviceManagement.WebAPP.Models;
 
-namespace Project2.WebAPI.DAL.Converters
+namespace Project3.DeviceManagement.WebAPP.Models.Converters
 {
     internal static class DeviceConverters
     {
-        #region ToDto
+		#region ToModel
 
-        internal static Device ToDtoDevice(this EntityDevice entity)
+		internal static ModelDevice ToModelDevice(this EntityDevice entity)
         {
 	        if (entity == null)
 		        return null;
 
-	        return new Device
+	        return new ModelDevice
 	        {
 		        DeviceId = entity.Id,
 		        DeviceName = entity.DeviceName,
@@ -24,19 +23,21 @@ namespace Project2.WebAPI.DAL.Converters
 		        Status = entity.Status,
 		        IsActive = entity.IsActive,
 		        DateCreated = entity.DateCreated,
-	        };
+            ModelCategory = entity.Category?.ToModelCategory(),
+            ModelZone = entity.Zone?.ToModelZone()
+					};
         }
 
-        internal static IList<Device> ToDtoDeviceCollection(this IEnumerable<EntityDevice> entityList)
+        internal static IList<ModelDevice> ToModelDeviceCollection(this IEnumerable<EntityDevice> entityList)
         {
-            var dtoList = new List<Device>();
+            var dtoList = new List<ModelDevice>();
 
             if (entityList == null || !entityList.Any())
                 return dtoList;
 
             foreach (var entity in entityList)
             {
-                var dto = entity.ToDtoDevice();
+                var dto = entity.ToModelDevice();
                 if (dto != null)
                     dtoList.Add(dto);
             }
@@ -48,24 +49,30 @@ namespace Project2.WebAPI.DAL.Converters
 
         #region ToEntity
 
-        internal static EntityDevice ToEntityDevice(this Device dto)
+        internal static EntityDevice ToEntityDevice(this ModelDevice dto)
         {
-            if (dto == null)
-                return null;
+	        if (dto == null)
+		        return null;
 
-            return new EntityDevice
-            {
-                Id = dto.DeviceId,
-                DeviceName = dto.DeviceName,
-                CategoryId = dto.CategoryId,
-                ZoneId = dto.ZoneId,
-                Status = dto.Status,
-                IsActive = dto.IsActive,
-                DateCreated = dto.DateCreated,
-            };
+	        if (dto.DeviceId == Guid.Empty)
+	        {
+		        dto.DeviceId = Guid.NewGuid();
+		        dto.DateCreated = DateTime.Now;
+	        }
+
+	        return new EntityDevice
+	        {
+		        Id = dto.DeviceId,
+		        DeviceName = dto.DeviceName,
+		        CategoryId = dto.CategoryId,
+		        ZoneId = dto.ZoneId,
+		        Status = dto.Status,
+		        IsActive = dto.IsActive,
+		        DateCreated = dto.DateCreated,
+	        };
         }
 
-        internal static EntityDevice ToEntityDevice(this Device dto, EntityDevice currentEntity)
+        internal static EntityDevice ToEntityDevice(this ModelDevice dto, EntityDevice currentEntity)
         {
             if (dto == null)
                 return null;

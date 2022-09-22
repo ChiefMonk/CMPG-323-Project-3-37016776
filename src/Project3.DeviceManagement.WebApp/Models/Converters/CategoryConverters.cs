@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Project3.DeviceManagement.Data.Entities;
-using Project3.DeviceManagement.WebAPP.Models;
 
-namespace Project2.WebAPI.DAL.Converters
+namespace Project3.DeviceManagement.WebAPP.Models.Converters
 {
     internal static class CategoryConverters
     {
-        #region ToDto
+		#region ToModel
 
-        internal static Category ToDtoCategory(this EntityCategory entity)
+		internal static ModelCategory ToModelCategory(this EntityCategory entity)
         {
             if (entity == null)
                 return null;
 
-            return new Category
+            return new ModelCategory
 						{
                 CategoryId = entity.Id,
                 CategoryName = entity.CategoryName,
@@ -24,16 +23,16 @@ namespace Project2.WebAPI.DAL.Converters
             };
         }
 
-        internal static IList<Category> ToDtoCategoryCollection(this IEnumerable<EntityCategory> entityList)
+        internal static IList<ModelCategory> ToModelCategoryCollection(this IEnumerable<EntityCategory> entityList)
         {
-            var dtoList = new List<Category>();
+            var dtoList = new List<ModelCategory>();
 
             if (entityList == null || !entityList.Any())
                 return dtoList;
 
             foreach (var entity in entityList)
             {
-                var dto = entity.ToDtoCategory();
+                var dto = entity.ToModelCategory();
                 if (dto != null)
                     dtoList.Add(dto);
             }
@@ -45,13 +44,16 @@ namespace Project2.WebAPI.DAL.Converters
 
         #region ToEntity
 
-        internal static EntityCategory ToEntityCategory(this Category dto)
+        internal static EntityCategory ToEntityCategory(this ModelCategory dto)
         {
 	        if (dto == null)
 		        return null;
 
 	        if (dto.CategoryId == Guid.Empty)
+	        {
 		        dto.CategoryId = Guid.NewGuid();
+		        dto.DateCreated = DateTime.Now;
+	        }
 
 	        return new EntityCategory
 	        {
@@ -62,7 +64,7 @@ namespace Project2.WebAPI.DAL.Converters
 	        };
         }
 
-        internal static EntityCategory ToEntityCategory(this Category dto, EntityCategory currentEntity)
+        internal static EntityCategory ToEntityCategory(this ModelCategory dto, EntityCategory currentEntity)
         {
             if (dto == null)
                 return null;

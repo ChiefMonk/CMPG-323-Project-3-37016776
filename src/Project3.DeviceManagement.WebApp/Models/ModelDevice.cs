@@ -1,13 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
-
 namespace Project3.DeviceManagement.WebAPP.Models
 {
-    public partial class Device
+    public class ModelDevice
     {
         [DisplayName("Device ID")]
         public Guid DeviceId { get; set; }
@@ -25,8 +21,8 @@ namespace Project3.DeviceManagement.WebAPP.Models
         public DateTime DateCreated { get; set; }
 
         [DisplayName("Category")]
-        public virtual Category Category { get; set; }
+        public ModelCategory ModelCategory { get; set; }
         [DisplayName("Zone")]
-        public virtual Zone Zone { get; set; }
+        public ModelZone ModelZone { get; set; }
     }
 }

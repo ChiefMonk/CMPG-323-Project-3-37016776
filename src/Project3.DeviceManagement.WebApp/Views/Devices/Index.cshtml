@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project3.DeviceManagement.WebAPP.Models.Device>
+﻿@model IEnumerable<Project3.DeviceManagement.WebAPP.Models.ModelDevice>
 
 @{
     ViewData["Title"] = "Devices";
@@ -26,10 +26,10 @@
                 @Html.DisplayNameFor(model => model.DateCreated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.DisplayNameFor(model => model.ModelCategory)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Zone)
+                @Html.DisplayNameFor(model => model.ModelZone)
             </th>
             <th></th>
             <th></th>
@@ -52,10 +52,10 @@
                 @Html.DisplayFor(modelItem => item.DateCreated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                @Html.DisplayFor(modelItem => item.ModelCategory.CategoryName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Zone.ZoneName)
+                @Html.DisplayFor(modelItem => item.ModelZone.ZoneName)
             </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.DeviceId">

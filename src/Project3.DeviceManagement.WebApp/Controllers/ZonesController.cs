@@ -1,149 +1,188 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Project3.DeviceManagement.WebAPP.Models;
-using Project3.DeviceManagement.Data.Db;
-using Project2.WebAPI.DAL.Converters;
+using Project3.DeviceManagement.WebAPP.Models.Converters;
+using Project3.DeviceManagement.Data.Repositories.Zone;
+using Microsoft.AspNetCore.Http;
+using Project3.DeviceManagement.Data.Exceptions;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
-    public class ZonesController : Controller
-    {
-        private readonly ConnectedOfficeDbContext _context;
+	public class ZonesController : Controller
+	{
+		private readonly IZoneRepository _zoneRepository;
 
-        public ZonesController(ConnectedOfficeDbContext context)
-        {
-            _context = context;
-        }
+		public ZonesController(IZoneRepository zoneRepository)
+		{
+			_zoneRepository = zoneRepository;
+		}
 
-        // GET: Zones
-        public async Task<IActionResult> Index()
-        {
-	        var list = await _context.Zone.ToListAsync();
+		// GET: Zones
+		public async Task<IActionResult> Index()
+		{
+			try
+			{
+				var zoneList = await _zoneRepository.GetAllCollectionAsync();
+				return View(zoneList.ToModelZoneCollection());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-						return View(list.ToModelZoneCollection());
-        }
+		// GET: Zones/Details/5
+		public async Task<IActionResult> Details(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-        // GET: Zones/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+			try
+			{
+				var zone = await _zoneRepository.GetByIdAsync(id.Value);
+				return View(zone.ToModelZone());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-            var zone = await _context.Zone
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (zone == null)
-            {
-                return NotFound();
-            }
+		// GET: Zones/Create
+		public IActionResult Create()
+		{
+			return View();
+		}
 
-            return View(zone.ToModelZone());
-        }
+		// POST: Zones/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("ZoneId,ZoneName,ZoneDescription,DateCreated")] ModelZone modelZone)
+		{
+			try
+			{
+				await _zoneRepository.AddAsync(modelZone.ToEntityZone());
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message : ex.Message);
+			}
+		}
 
-        // GET: Zones/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+		// GET: Zones/Edit/5
+		public async Task<IActionResult> Edit(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-        // POST: Zones/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ZoneId,ZoneName,ZoneDescription,DateCreated")] Zone zone)
-        {
-            zone.ZoneId = Guid.NewGuid();
-            _context.Add(zone);
-            await _context.SaveChangesAsync();
+			try
+			{
+				var zone = await _zoneRepository.FindOneAsync(e => e.Id == id.Value);
+				return View(zone.ToModelZone());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-            return RedirectToAction(nameof(Index));
-        }
+		// POST: Zones/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(Guid id, [Bind("ZoneId,ZoneName,ZoneDescription,DateCreated")] ModelZone modelZone)
+		{
+			if (id != modelZone.ZoneId)
+				return NotFound();
 
-        // GET: Zones/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+			string errorMessage = null;
 
-            var zone = await _context.Zone.FindAsync(id);
-            if (zone == null)
-            {
-                return NotFound();
-            }
-            return View(zone.ToModelZone());
-        }
+			try
+			{
+				await _zoneRepository.UpdateAsync(modelZone.ToEntityZone());
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				errorMessage = ex.InnerException?.Message != null ? ex.InnerException.Message : ex.Message;
+				errorMessage = $"{ex.StatusCode} : {errorMessage}";
+			}
+			catch (Exception ex)
+			{
+				errorMessage = ex.InnerException?.Message != null ? ex.InnerException.Message : ex.Message;
+				errorMessage = $"{StatusCodes.Status500InternalServerError} : {errorMessage}";
 
-        // POST: Zones/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ZoneId,ZoneName,ZoneDescription,DateCreated")] Zone zone)
-        {
-            if (id != zone.ZoneId)
-            {
-                return NotFound();
-            }
+				//return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
 
-            try
-            {
-                _context.Update(zone);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ZoneExists(zone.ZoneId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
+			TempData["ErrorMessage"] = errorMessage;
+			return RedirectToAction(nameof(Edit));
+		}
 
-        }
+		// GET: Zones/Delete/5
+		public async Task<IActionResult> Delete(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-        // GET: Zones/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+			try
+			{
+				var zone = await _zoneRepository.FindOneAsync(e => e.Id == id.Value);
+				return View(zone.ToModelZone());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-            var zone = await _context.Zone
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (zone == null)
-            {
-                return NotFound();
-            }
+		// POST: Zones/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(Guid id)
+		{
+			if (id == Guid.Empty)
+				return NotFound();
 
-            return View(zone.ToModelZone());
-        }
-
-        // POST: Zones/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var zone = await _context.Zone.FindAsync(id);
-            _context.Zone.Remove(zone);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ZoneExists(Guid id)
-        {
-            return _context.Zone.Any(e => e.Id == id);
-        }
-    }
+			try
+			{
+				await _zoneRepository.RemoveAsync(id);
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
+	}
 }

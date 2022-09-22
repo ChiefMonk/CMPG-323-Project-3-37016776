@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Project3.DeviceManagement.Shared.Utils.Exceptions
+namespace Project3.DeviceManagement.Data.Exceptions
 {
 	/// <summary>
 	/// MyWebApiException class

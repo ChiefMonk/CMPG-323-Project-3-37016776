@@ -1,47 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
+
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace Project3.DeviceManagement.Data.Entities
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	[Table("Category")]
-	public class EntityCategory : IDataEntity
+	public partial class EntityCategory : IDataEntity
 	{
-		/// <summary>
-		/// Gets or sets the category identifier.
-		/// </summary>
-		/// <value>
-		/// The category identifier.
-		/// </value>
+		public EntityCategory()
+		{
+			Device = new HashSet<EntityDevice>();
+		}
+
 		[Key]
 		[Column("CategoryId")]
 		public Guid Id { get; set; }
 
-		/// <summary>
-		/// Gets or sets the name of the category.
-		/// </summary>
-		/// <value>
-		/// The name of the category.
-		/// </value>
 		public string CategoryName { get; set; }
 
-		/// <summary>
-		/// Gets or sets the category description.
-		/// </summary>
-		/// <value>
-		/// The category description.
-		/// </value>
 		public string CategoryDescription { get; set; }
 
-		/// <summary>
-		/// Gets or sets the date created.
-		/// </summary>
-		/// <value>
-		/// The date created.
-		/// </value>
 		public DateTime DateCreated { get; set; }
+
+		public virtual ICollection<EntityDevice> Device { get; set; }
 	}
 }

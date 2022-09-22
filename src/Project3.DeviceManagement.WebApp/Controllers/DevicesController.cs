@@ -1,158 +1,215 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Project2.WebAPI.DAL.Converters;
-using Project3.DeviceManagement.Data.Db;
+using Project3.DeviceManagement.Data.Exceptions;
+using Project3.DeviceManagement.Data.Repositories.Category;
+using Project3.DeviceManagement.Data.Repositories.Device;
+using Project3.DeviceManagement.Data.Repositories.Zone;
 using Project3.DeviceManagement.WebAPP.Models;
+using Project3.DeviceManagement.WebAPP.Models.Converters;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
-    public class DevicesController : Controller
-    {
-        private readonly ConnectedOfficeDbContext _context;
+	public class DevicesController : Controller
+	{
+		private readonly ICategoryRepository _categoryRepository;
+		private readonly IZoneRepository _zoneRepository;
+		private readonly IDeviceRepository _deviceRepository;
 
-        public DevicesController(ConnectedOfficeDbContext context)
-        {
-            _context = context;
-        }
+		public DevicesController(
+			ICategoryRepository categoryRepository,
+			IZoneRepository zoneRepository,
+			IDeviceRepository deviceRepository)
+		{
+			_categoryRepository = categoryRepository;
+			_zoneRepository = zoneRepository;
+			_deviceRepository = deviceRepository;
+		}
 
-        // GET: Devices
-        public async Task<IActionResult> Index()
-        {
-            var list = await _context.Device.Include(d => d.Category).Include(d => d.Zone).ToListAsync();
-            return View(list.ToDtoDeviceCollection());
-        }
+		// GET: Devices
+		public async Task<IActionResult> Index()
+		{
+			try
+			{
+				var deviceList = await _deviceRepository.GetAllCollectionAsync(d => d.Category, d => d.Zone);
+				return View(deviceList.ToModelDeviceCollection());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-        // GET: Devices/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// GET: Devices/Details/5
+		public async Task<IActionResult> Details(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-            var device = await _context.Device
-                .Include(d => d.Category)
-                .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (device == null)
-            {
-                return NotFound();
-            }
+			try
+			{
+				var device = await _deviceRepository.GetByIdAsync(id.Value, d => d.Category, d => d.Zone);
+				return View(device.ToModelDevice());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-            return View(device.ToDtoDevice());
-        }
+		// GET: Devices/Create
+		public async Task<IActionResult> Create()
+		{
+			try
+			{
+				var categoryList = await _categoryRepository.GetAllCollectionAsync();
+				var zoneList = await _zoneRepository.GetAllCollectionAsync();
 
-        // GET: Devices/Create
-        public IActionResult Create()
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
-            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName");
-            return View();
-        }
+				ViewData["CategoryId"] = new SelectList(categoryList.ToModelCategoryCollection(), "CategoryId", "CategoryName");
+				ViewData["ZoneId"] = new SelectList(zoneList.ToModelZoneCollection(), "ZoneId", "ZoneName");
+				return View();
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
 
-        // POST: Devices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")] Device device)
-        {
-            device.DeviceId = Guid.NewGuid();
-            _context.Add(device);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+		}
 
+		// POST: Devices/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create(
+			[Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")]
+			ModelDevice modelDevice)
+		{
+			try
+			{
+				await _deviceRepository.AddAsync(modelDevice.ToEntityDevice());
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-        }
+		// GET: Devices/Edit/5
+		public async Task<IActionResult> Edit(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-        // GET: Devices/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+			try
+			{
+				var device = await _deviceRepository.FindOneAsync(e => e.Id == id.Value, d => d.Category, d => d.Zone);
+				var categoryList = await _categoryRepository.GetAllCollectionAsync();
+				var zoneList = await _zoneRepository.GetAllCollectionAsync();
 
-            var device = await _context.Device.FindAsync(id);
-            if (device == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", device.CategoryId);
-            ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName", device.ZoneId);
+				ViewData["CategoryId"] = new SelectList(categoryList.ToModelCategoryCollection(), "CategoryId", "CategoryName", device.CategoryId);
+				ViewData["ZoneId"] = new SelectList(zoneList.ToModelZoneCollection(), "ZoneId", "ZoneName", device.ZoneId);
 
-            return View(device.ToDtoDevice());
-        }
+				return View(device.ToModelDevice());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-        // POST: Devices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")] Device device)
-        {
-            if (id != device.DeviceId)
-            {
-                return NotFound();
-            }
-            try
-            {
-                _context.Update(device);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DeviceExists(device.DeviceId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
+		// POST: Devices/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+		// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(Guid id,
+			[Bind("DeviceId,DeviceName,CategoryId,ZoneId,Status,IsActive,DateCreated")] ModelDevice modelDevice)
+		{
+			if (id != modelDevice.DeviceId)
+				return NotFound();
 
-        }
+			try
+			{
+				await _deviceRepository.UpdateAsync(modelDevice.ToEntityDevice());
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-        // GET: Devices/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// GET: Devices/Delete/5
+		public async Task<IActionResult> Delete(Guid? id)
+		{
+			if (id == null || id.Value == Guid.Empty)
+				return NotFound();
 
-            var device = await _context.Device
-                .Include(d => d.Category)
-                .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (device == null)
-            {
-                return NotFound();
-            }
+			try
+			{
+				var device = await _deviceRepository.FindOneAsync(e=>e.Id == id.Value, d => d.Category, d => d.Zone);
+				return View(device.ToModelDevice());
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-            return View(device.ToDtoDevice());
-        }
+		// POST: Devices/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(Guid id)
+		{
+			if (id == Guid.Empty)
+				return NotFound();
 
-        // POST: Devices/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var device = await _context.Device.FindAsync(id);
-            _context.Device.Remove(device);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			try
+			{
+				await _deviceRepository.RemoveAsync(id);
+				return RedirectToAction(nameof(Index));
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode(ex.StatusCode, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message != null ? ex.InnerException.Message: ex.Message);
+			}
+		}
 
-        private bool DeviceExists(Guid id)
-        {
-            return _context.Device.Any(e => e.Id == id);
-        }
-    }
+	}
 }

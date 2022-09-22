@@ -1,20 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Project3.DeviceManagement.Data.Entities;
-using Project3.DeviceManagement.WebAPP.Models;
 
-namespace Project2.WebAPI.DAL.Converters
+namespace Project3.DeviceManagement.WebAPP.Models.Converters
 {
     internal static class ZoneConverters
     {
-        #region ToDto
+		#region ToModel
 
-        internal static Zone ToModelZone(this EntityZone entity)
+		internal static ModelZone ToModelZone(this EntityZone entity)
         {
             if (entity == null)
                 return null;
 
-            return new Zone
+            return new ModelZone
 						{
 							ZoneId = entity.Id,
                 ZoneName = entity.ZoneName,
@@ -23,9 +23,9 @@ namespace Project2.WebAPI.DAL.Converters
             };
         }
 
-        internal static IList<Zone> ToModelZoneCollection(this List<EntityZone> entityList)
+        internal static IList<ModelZone> ToModelZoneCollection(this IEnumerable<EntityZone> entityList)
         {
-            var dtoList = new List<Zone>();
+            var dtoList = new List<ModelZone>();
 
             if (entityList == null || !entityList.Any())
                 return dtoList;
@@ -44,21 +44,27 @@ namespace Project2.WebAPI.DAL.Converters
 
         #region ToEntity
 
-        internal static EntityZone ToEntityZone(this Zone dto)
+        internal static EntityZone ToEntityZone(this ModelZone dto)
         {
-            if (dto == null)
-                return null;
+	        if (dto == null)
+		        return null;
 
-            return new EntityZone
-            {
-                Id = dto.ZoneId,
-                ZoneName = dto.ZoneName,
-                ZoneDescription = dto.ZoneDescription,
-                DateCreated = dto.DateCreated,
-            };
+	        if (dto.ZoneId == Guid.Empty)
+	        {
+		        dto.ZoneId = Guid.NewGuid();
+		        dto.DateCreated = DateTime.Now;
+	        }
+
+	        return new EntityZone
+	        {
+		        Id = dto.ZoneId,
+		        ZoneName = dto.ZoneName,
+		        ZoneDescription = dto.ZoneDescription,
+		        DateCreated = dto.DateCreated,
+	        };
         }
 
-        internal static EntityZone ToEntityZone(this Zone dto, EntityZone currentEntity)
+        internal static EntityZone ToEntityZone(this ModelZone dto, EntityZone currentEntity)
         {
             if (dto == null)
                 return null;
