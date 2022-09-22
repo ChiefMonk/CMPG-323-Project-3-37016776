@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Internal;
-using Project2.WebAPI.DAL.Dtos;
 using Project3.DeviceManagement.Data.Entities;
+using Project3.DeviceManagement.Shared.Dtos;
 
 namespace Project3.DeviceManagement.WebAPI.Services.Category
 {

@@ -1,44 +1,61 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Project3.DeviceManagement.WebAPP.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Project2.WebAPI.DAL.Converters;
+using Project3.DeviceManagement.Data.Repositories.Category;
+using Project3.DeviceManagement.Shared.Utils.Exceptions;
 using Project3.DeviceManagement.WebAPP.Models;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ConnectedOfficeContext _context;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoriesController(ConnectedOfficeContext context)
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
-            _context = context;
+	        _categoryRepository = categoryRepository;
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+	        try
+	        {
+		        var entityList = await _categoryRepository.GetAllCollectionAsync();
+		        return View(entityList.ToDtoCategoryCollection());
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
         }
 
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+	        if (id == null || id.Value == Guid.Empty)
+		        return NotFound();
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+	        try
+	        {
+		        var category = await _categoryRepository.GetByIdAsync(id.Value);
+		        return View(category.ToDtoCategory());
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
 
-            return View(category);
         }
 
         // GET: Categories/Create
@@ -52,28 +69,44 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")] Category category)
+        public async Task<IActionResult> Create(
+	        [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")]
+	        Category category)
         {
-            category.CategoryId = Guid.NewGuid();
-            _context.Add(category);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+	        try
+	        {
+		        await _categoryRepository.AddAsync(category.ToEntityCategory());
+		        return RedirectToAction(nameof(Index));
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
         }
 
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+	        if (id == null || id.Value == Guid.Empty)
+		        return NotFound();
 
-            var category = await _context.Category.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return View(category);
+	        try
+	        {
+		        var category = await _categoryRepository.GetByIdAsync(id.Value);
+		        return View(category.ToDtoCategory());
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
         }
 
         // POST: Categories/Edit/5
@@ -81,47 +114,47 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")] Category category)
+        public async Task<IActionResult> Edit(Guid id,
+	        [Bind("CategoryId,CategoryName,CategoryDescription,DateCreated")] Category category)
         {
-            if (id != category.CategoryId)
-            {
-                return NotFound();
-            }
-            try
-            {
-                _context.Update(category);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(category.CategoryId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
+	        if (id != category.CategoryId)
+		        return NotFound();
+
+	        try
+	        {
+		        await _categoryRepository.UpdateAsync(category.ToEntityCategory());
+		        return RedirectToAction(nameof(Index));
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
         }
 
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+	        if (id == null || id.Value == Guid.Empty)
+		        return NotFound();
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+	        try
+	        {
+		        var category = await _categoryRepository.GetByIdAsync(id.Value);
+		        return View(category.ToDtoCategory());
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
 
-            return View(category);
         }
 
         // POST: Categories/Delete/5
@@ -129,15 +162,22 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var category = await _context.Category.FindAsync(id);
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+	        if (id == Guid.Empty)
+		        return NotFound();
 
-        private bool CategoryExists(Guid id)
-        {
-            return _context.Category.Any(e => e.CategoryId == id);
+	        try
+	        {
+		        await _categoryRepository.RemoveAsync(id);
+		        return RedirectToAction(nameof(Index));
+	        }
+	        catch (MyWebApiException ex)
+	        {
+		        return StatusCode(ex.StatusCode, ex.Message);
+	        }
+	        catch (Exception ex)
+	        {
+		        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+	        }
         }
     }
 }

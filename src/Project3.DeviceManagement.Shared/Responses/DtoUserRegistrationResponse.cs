@@ -1,4 +1,4 @@
-﻿using Project2.WebAPI.DAL.Dtos;
+﻿using Project3.DeviceManagement.Shared.Dtos;
 
 namespace Project3.DeviceManagement.Shared.Responses
 {

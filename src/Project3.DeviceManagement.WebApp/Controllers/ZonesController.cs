@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Project3.DeviceManagement.WebAPP.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Project3.DeviceManagement.WebAPP.Data;
 using Project3.DeviceManagement.WebAPP.Models;
+using Project3.DeviceManagement.Data.Db;
+using Project2.WebAPI.DAL.Converters;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
     public class ZonesController : Controller
     {
-        private readonly ConnectedOfficeContext _context;
+        private readonly ConnectedOfficeDbContext _context;
 
-        public ZonesController(ConnectedOfficeContext context)
+        public ZonesController(ConnectedOfficeDbContext context)
         {
             _context = context;
         }
@@ -21,7 +21,9 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         // GET: Zones
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Zone.ToListAsync());
+	        var list = await _context.Zone.ToListAsync();
+
+						return View(list.ToModelZoneCollection());
         }
 
         // GET: Zones/Details/5
@@ -33,13 +35,13 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             }
 
             var zone = await _context.Zone
-                .FirstOrDefaultAsync(m => m.ZoneId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (zone == null)
             {
                 return NotFound();
             }
 
-            return View(zone);
+            return View(zone.ToModelZone());
         }
 
         // GET: Zones/Create
@@ -75,7 +77,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             {
                 return NotFound();
             }
-            return View(zone);
+            return View(zone.ToModelZone());
         }
 
         // POST: Zones/Edit/5
@@ -119,13 +121,13 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             }
 
             var zone = await _context.Zone
-                .FirstOrDefaultAsync(m => m.ZoneId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (zone == null)
             {
                 return NotFound();
             }
 
-            return View(zone);
+            return View(zone.ToModelZone());
         }
 
         // POST: Zones/Delete/5
@@ -141,7 +143,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 
         private bool ZoneExists(Guid id)
         {
-            return _context.Zone.Any(e => e.ZoneId == id);
+            return _context.Zone.Any(e => e.Id == id);
         }
     }
 }

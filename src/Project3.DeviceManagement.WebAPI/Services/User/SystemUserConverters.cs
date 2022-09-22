@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using Project2.WebAPI.DAL.Dtos;
 using Project3.DeviceManagement.Data.Entities;
+using Project3.DeviceManagement.Shared.Dtos;
 using Project3.DeviceManagement.Shared.Requests;
 using Project3.DeviceManagement.Shared.Responses;
 

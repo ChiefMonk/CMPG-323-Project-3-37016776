@@ -8,7 +8,7 @@ namespace Project3.DeviceManagement.Data.Entities
 	/// 
 	/// </summary>
 	[Table("Device")]
-	public class EntityDevice
+	public class EntityDevice : IDataEntity
 	{
 		/// <summary>
 		/// Gets or sets the device identifier.
@@ -17,7 +17,8 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The device identifier.
 		/// </value>
 		[Key]
-		public Guid DeviceId { get; set; }
+		[Column("DeviceId")]
+		public Guid Id { get; set; }
 		/// <summary>
 		/// Gets or sets the name of the device.
 		/// </summary>
@@ -31,6 +32,7 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// <value>
 		/// The category identifier.
 		/// </value>
+		[ForeignKey("Category")]
 		public Guid CategoryId { get; set; }
 		/// <summary>
 		/// Gets or sets the zone identifier.
@@ -38,6 +40,7 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// <value>
 		/// The zone identifier.
 		/// </value>
+		[ForeignKey("Zone")]
 		public Guid ZoneId { get; set; }
 		/// <summary>
 		/// Gets or sets the status.
@@ -46,13 +49,14 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The status.
 		/// </value>
 		public string Status { get; set; }
+
 		/// <summary>
-		/// Gets or sets a value indicating whether this instance is actvie.
+		/// Gets or sets a value indicating whether this instance is active.
 		/// </summary>
 		/// <value>
-		///   <c>true</c> if this instance is actvie; otherwise, <c>false</c>.
+		///   <c>true</c> if this instance is active; otherwise, <c>false</c>.
 		/// </value>
-		public bool IsActvie { get; set; }
+		public bool IsActive { get; set; }
 		/// <summary>
 		/// Gets or sets the date created.
 		/// </summary>
@@ -60,5 +64,21 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The date created.
 		/// </value>
 		public DateTime DateCreated { get; set; }
+
+		/// <summary>
+		/// Gets or sets the category.
+		/// </summary>
+		/// <value>
+		/// The category.
+		/// </value>
+		public EntityCategory Category { get; set; }
+
+		/// <summary>
+		/// Gets or sets the zone.
+		/// </summary>
+		/// <value>
+		/// The zone.
+		/// </value>
+		public EntityZone Zone { get; set; }
 	}
 }

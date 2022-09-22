@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Internal;
-using Project2.WebAPI.DAL.Dtos;
 using Project3.DeviceManagement.Data.Entities;
+using Project3.DeviceManagement.Shared.Dtos;
 
 namespace Project3.DeviceManagement.WebAPI.Services.Category
 {
@@ -44,14 +44,14 @@ namespace Project3.DeviceManagement.WebAPI.Services.Category
 
 		#region ToEntity
 
-		internal static EntityCategory ToEntityCategory(this DtoCategory dto)
+		internal static EntityCategory ToEntityCategory(this Category dto)
 		{
 			if (dto == null)
 				return null;
 
 			return new EntityCategory
 			{
-				CategoryId = dto.Id,
+				Id = dto.CategoryId,
 				CategoryName = dto.CategoryName,
 				CategoryDescription = dto.CategoryDescription,
 				DateCreated = dto.DateCreated,

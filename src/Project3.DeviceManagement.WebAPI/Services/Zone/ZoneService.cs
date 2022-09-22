@@ -1,4 +1,5 @@
 ﻿using Project3.DeviceManagement.Data.Repositories.Device;
+using Project3.DeviceManagement.Data.Repositories.Zone;
 
 namespace Project3.DeviceManagement.WebAPI.Services.Zone
 {

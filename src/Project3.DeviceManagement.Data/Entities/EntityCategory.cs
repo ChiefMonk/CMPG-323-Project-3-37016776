@@ -8,7 +8,7 @@ namespace Project3.DeviceManagement.Data.Entities
 	/// 
 	/// </summary>
 	[Table("Category")]
-	public class EntityCategory
+	public class EntityCategory : IDataEntity
 	{
 		/// <summary>
 		/// Gets or sets the category identifier.
@@ -17,7 +17,8 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The category identifier.
 		/// </value>
 		[Key]
-		public Guid CategoryId { get; set; }
+		[Column("CategoryId")]
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.

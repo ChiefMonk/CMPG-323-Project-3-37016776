@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Project2.WebAPI.DAL.Dtos
+namespace Project3.DeviceManagement.Shared.Dtos
 {
 	/// <summary>
 	/// 

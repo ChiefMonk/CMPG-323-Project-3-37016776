@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Project3.DeviceManagement.WebAPP.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Project3.DeviceManagement.WebAPP.Data;
+using Project2.WebAPI.DAL.Converters;
+using Project3.DeviceManagement.Data.Db;
 using Project3.DeviceManagement.WebAPP.Models;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
     public class DevicesController : Controller
     {
-        private readonly ConnectedOfficeContext _context;
+        private readonly ConnectedOfficeDbContext _context;
 
-        public DevicesController(ConnectedOfficeContext context)
+        public DevicesController(ConnectedOfficeDbContext context)
         {
             _context = context;
         }
@@ -22,8 +22,8 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            var connectedOfficeContext = _context.Device.Include(d => d.Category).Include(d => d.Zone);
-            return View(await connectedOfficeContext.ToListAsync());
+            var list = await _context.Device.Include(d => d.Category).Include(d => d.Zone).ToListAsync();
+            return View(list.ToDtoDeviceCollection());
         }
 
         // GET: Devices/Details/5
@@ -37,13 +37,13 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             var device = await _context.Device
                 .Include(d => d.Category)
                 .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (device == null)
             {
                 return NotFound();
             }
 
-            return View(device);
+            return View(device.ToDtoDevice());
         }
 
         // GET: Devices/Create
@@ -84,7 +84,8 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", device.CategoryId);
             ViewData["ZoneId"] = new SelectList(_context.Zone, "ZoneId", "ZoneName", device.ZoneId);
-            return View(device);
+
+            return View(device.ToDtoDevice());
         }
 
         // POST: Devices/Edit/5
@@ -129,13 +130,13 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
             var device = await _context.Device
                 .Include(d => d.Category)
                 .Include(d => d.Zone)
-                .FirstOrDefaultAsync(m => m.DeviceId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (device == null)
             {
                 return NotFound();
             }
 
-            return View(device);
+            return View(device.ToDtoDevice());
         }
 
         // POST: Devices/Delete/5
@@ -151,7 +152,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 
         private bool DeviceExists(Guid id)
         {
-            return _context.Device.Any(e => e.DeviceId == id);
+            return _context.Device.Any(e => e.Id == id);
         }
     }
 }

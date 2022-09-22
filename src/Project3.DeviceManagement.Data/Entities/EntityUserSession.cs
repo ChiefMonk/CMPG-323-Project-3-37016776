@@ -8,7 +8,7 @@ namespace Project3.DeviceManagement.Data.Entities
 	/// 
 	/// </summary>
 	[Table("UserSession")]
-	public class EntityUserSession
+	public class EntityUserSession : IDataEntity
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EntityUserSession"/> class.
@@ -25,7 +25,8 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The session identifier.
 		/// </value>
 		[Key]
-		public Guid SessionId { get; set; }
+		[Column("SessionId")]
+		public Guid Id { get; set; }
 		/// <summary>
 		/// Gets or sets the date created.
 		/// </summary>

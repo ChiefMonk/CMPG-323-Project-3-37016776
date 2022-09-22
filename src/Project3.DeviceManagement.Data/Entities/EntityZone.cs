@@ -8,7 +8,7 @@ namespace Project3.DeviceManagement.Data.Entities
 	/// 
 	/// </summary>
 	[Table("Zone")]
-	public class EntityZone
+	public class EntityZone : IDataEntity
 	{
 		/// <summary>
 		/// Gets or sets the zone identifier.
@@ -17,7 +17,8 @@ namespace Project3.DeviceManagement.Data.Entities
 		/// The zone identifier.
 		/// </value>
 		[Key]
-		public Guid ZoneId { get; set; }
+		[Column("ZoneId")]
+		public Guid Id { get; set; }
 		/// <summary>
 		/// Gets or sets the name of the zone.
 		/// </summary>

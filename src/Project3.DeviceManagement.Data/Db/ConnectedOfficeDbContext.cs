@@ -6,12 +6,12 @@ using Project3.DeviceManagement.Data.Entities;
 // If you have enabled NRTs for your project, then un-comment the following line:
 // #nullable disable
 
-namespace Project3.DeviceManagement.WebAPP.Data
+namespace Project3.DeviceManagement.Data.Db
 {
 	/// <summary>
 	/// ConnectedOfficeDbContext class
 	/// </summary>
-	public class ConnectedOfficeDbContext : IdentityDbContext<EntitySystemUser>
+	public class ConnectedOfficeDbContext : DbContext
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ConnectedOfficeDbContext"/> class.
@@ -46,13 +46,6 @@ namespace Project3.DeviceManagement.WebAPP.Data
 		/// </value>
 		public virtual DbSet<EntityZone> Zone { get; set; }
 
-		/// <summary>
-		/// Gets or sets the user session.
-		/// </summary>
-		/// <value>
-		/// The user session.
-		/// </value>
-		public virtual DbSet<EntityUserSession> UserSession { get; set; }
 
 		/// <summary>
 		/// Override this method to further configure the model that was discovered by convention from the entity types
