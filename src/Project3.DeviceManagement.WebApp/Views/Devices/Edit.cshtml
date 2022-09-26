@@ -5,8 +5,8 @@
 }
 
 <h1>Edit Device</h1>
-
 <hr />
+<span class="@TempData["MessageClass"]">@TempData["MessageData"]</span>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -37,9 +37,9 @@
                     <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
                 </label>
             </div>
-            <div class="form-group" hidden>
+            <div class="form-group">
                 <label asp-for="DateCreated" class="control-label"></label>
-                <input asp-for="DateCreated" class="form-control" />
+        <input asp-for="DateCreated" class="form-control" readonly="readonly" />
                 <span asp-validation-for="DateCreated" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -3,26 +3,90 @@ using System.ComponentModel;
 
 namespace Project3.DeviceManagement.WebAPP.Models
 {
-    public class ModelDevice
-    {
-        [DisplayName("Device ID")]
-        public Guid DeviceId { get; set; }
-        [DisplayName("Device Name")]
-        public string DeviceName { get; set; }
-        [DisplayName("Category ID")]
-        public Guid CategoryId { get; set; }
-        [DisplayName("Zone ID")]
-        public Guid ZoneId { get; set; }
-        [DisplayName("Status")]
-        public string Status { get; set; }
-        [DisplayName("Is Active")]
-        public bool IsActive { get; set; }
-        [DisplayName("Date Created")]
-        public DateTime DateCreated { get; set; }
+	/// <summary>
+	/// ModelDevice
+	/// </summary>
+	public class ModelDevice
+	{
+		/// <summary>
+		/// Gets or sets the device identifier.
+		/// </summary>
+		/// <value>
+		/// The device identifier.
+		/// </value>
+		[DisplayName("Device ID")]
+		public Guid DeviceId { get; set; }
 
-        [DisplayName("Category")]
-        public ModelCategory ModelCategory { get; set; }
-        [DisplayName("Zone")]
-        public ModelZone ModelZone { get; set; }
-    }
+		/// <summary>
+		/// Gets or sets the name of the device.
+		/// </summary>
+		/// <value>
+		/// The name of the device.
+		/// </value>
+		[DisplayName("Device Name")]
+		public string DeviceName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the category identifier.
+		/// </summary>
+		/// <value>
+		/// The category identifier.
+		/// </value>
+		[DisplayName("Category ID")]
+		public Guid CategoryId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the zone identifier.
+		/// </summary>
+		/// <value>
+		/// The zone identifier.
+		/// </value>
+		[DisplayName("Zone ID")]
+		public Guid ZoneId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the status.
+		/// </summary>
+		/// <value>
+		/// The status.
+		/// </value>
+		[DisplayName("Status")]
+		public string Status { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is active.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if this instance is active; otherwise, <c>false</c>.
+		/// </value>
+		[DisplayName("Is Active")]
+		public bool IsActive { get; set; }
+
+		/// <summary>
+		/// Gets or sets the date created.
+		/// </summary>
+		/// <value>
+		/// The date created.
+		/// </value>
+		[DisplayName("Date Created")]
+		public DateTime DateCreated { get; set; }
+
+		/// <summary>
+		/// Gets or sets the model category.
+		/// </summary>
+		/// <value>
+		/// The model category.
+		/// </value>
+		[DisplayName("Category")]
+		public ModelCategory ModelCategory { get; set; }
+
+		/// <summary>
+		/// Gets or sets the model zone.
+		/// </summary>
+		/// <value>
+		/// The model zone.
+		/// </value>
+		[DisplayName("Zone")]
+		public ModelZone ModelZone { get; set; }
+	}
 }

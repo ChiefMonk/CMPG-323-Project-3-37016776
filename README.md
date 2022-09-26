@@ -1,5 +1,5 @@
 
-# CMPG 323 Project 3 : IoT Device Management Web Application
+# CMPG 323 Project 3 : IoT Device Management Web APP
 <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="200px" style="text-align:center;float:center;" />
 
 ### Table of Contents

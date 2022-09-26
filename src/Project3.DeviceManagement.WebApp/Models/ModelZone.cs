@@ -4,26 +4,62 @@ using System.ComponentModel;
 
 namespace Project3.DeviceManagement.WebAPP.Models
 {
-    public class ModelZone
-    {
-        public ModelZone()
-        {
-            Device = new HashSet<ModelDevice>();
-        }
+	/// <summary>
+	/// ModelZone
+	/// </summary>
+	public class ModelZone
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ModelZone"/> class.
+		/// </summary>
+		public ModelZone()
+		{
+			Device = new HashSet<ModelDevice>();
+		}
 
-        [DisplayName("Zone ID")]
-        public Guid ZoneId { get; set; }
+		/// <summary>
+		/// Gets or sets the zone identifier.
+		/// </summary>
+		/// <value>
+		/// The zone identifier.
+		/// </value>
+		[DisplayName("Zone ID")]
+		public Guid ZoneId { get; set; }
 
-        [DisplayName("Zone Name")]
-        public string ZoneName { get; set; }
+		/// <summary>
+		/// Gets or sets the name of the zone.
+		/// </summary>
+		/// <value>
+		/// The name of the zone.
+		/// </value>
+		[DisplayName("Zone Name")]
+		public string ZoneName { get; set; }
 
-        [DisplayName("Zone Description")]
-        public string ZoneDescription { get; set; }
+		/// <summary>
+		/// Gets or sets the zone description.
+		/// </summary>
+		/// <value>
+		/// The zone description.
+		/// </value>
+		[DisplayName("Zone Description")]
+		public string ZoneDescription { get; set; }
 
-        [DisplayName("Date Created")]
-        public DateTime DateCreated { get; set; }
+		/// <summary>
+		/// Gets or sets the date created.
+		/// </summary>
+		/// <value>
+		/// The date created.
+		/// </value>
+		[DisplayName("Date Created")]
+		public DateTime DateCreated { get; set; }
 
-        [DisplayName("Device")]
-        public ICollection<ModelDevice> Device { get; set; }
-    }
+		/// <summary>
+		/// Gets or sets the device.
+		/// </summary>
+		/// <value>
+		/// The device.
+		/// </value>
+		[DisplayName("Device")]
+		public ICollection<ModelDevice> Device { get; set; }
+	}
 }

@@ -10,6 +10,10 @@
 *.userosscache
 *.sln.docstates
 
+# Ignore
+src/CMPG-323-Project-3-37016776/appsettings.json
+src/CMPG-323-Project-3-37016776/appsettings.Development.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

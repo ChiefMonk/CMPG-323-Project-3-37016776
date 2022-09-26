@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Project3.DeviceManagement.Data.Db;
 using Project3.DeviceManagement.Data.Exceptions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Project3.DeviceManagement.Data.Repositories
 {
 	/// <summary>
-	/// 
+	/// Repository
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <seealso cref="Project3.DeviceManagement.Data.Repositories.IRepository&lt;T&gt;" />
 	public class Repository<T> : IRepository<T> where T : class, IDataEntity
 	{
-		private readonly ConnectedOfficeDbContext _officeDbContext;
+		protected readonly ConnectedOfficeDbContext _officeDbContext;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Repository{T}"/> class.
@@ -39,7 +38,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="includes">The includes.</param>
 		/// <returns></returns>
 		/// <exception cref="MyWebApiException">Please specify a valid {nameof(T)} ID</exception>
-		public async ValueTask<T> GetByIdAsync(Guid id, params Expression<Func<T, object>>[] includes)
+		public virtual async ValueTask<T> GetByIdAsync(Guid id, params Expression<Func<T, object>>[] includes)
 		{
 			if (id == Guid.Empty)
 				throw new MyWebApiException(StatusCodes.Status400BadRequest, $"Please specify a valid {nameof(T)} ID");
@@ -49,7 +48,12 @@ namespace Project3.DeviceManagement.Data.Repositories
 			if (includes != null && includes.Any())
 				query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
-			return await query.FirstOrDefaultAsync();
+			var entity =  await query.FirstOrDefaultAsync();
+
+			if (entity == null)
+				throw new MyWebApiException(StatusCodes.Status404NotFound, $"No {nameof(T)} with id = '{id}' has been found");
+
+			return entity;
 		}
 
 		/// <summary>
@@ -57,7 +61,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// </summary>
 		/// <param name="includes">The includes.</param>
 		/// <returns></returns>
-		public async ValueTask<IEnumerable<T>> GetAllCollectionAsync(params Expression<Func<T, object>>[] includes)
+		public virtual async ValueTask<IEnumerable<T>> GetAllCollectionAsync(params Expression<Func<T, object>>[] includes)
 		{
 			var query = _officeDbContext.Set<T>().AsNoTracking();
 
@@ -73,14 +77,19 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="expression">The expression.</param>
 		/// <param name="includes">The includes.</param>
 		/// <returns></returns>
-		public async ValueTask<T> FindOneAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+		public virtual async ValueTask<T> FindOneAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
 		{
 			var query = _officeDbContext.Set<T>().AsNoTracking().Where(expression);
 
 			if (includes != null && includes.Any())
 				query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
-			return await query.FirstOrDefaultAsync();
+			var entity = await query.FirstOrDefaultAsync();
+
+			if (entity == null)
+				throw new MyWebApiException(StatusCodes.Status404NotFound, $"No {nameof(T)} has been found");
+
+			return entity;
 		}
 
 
@@ -90,7 +99,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="expression">The expression.</param>
 		/// <param name="includes">The includes.</param>
 		/// <returns></returns>
-		public async ValueTask<IEnumerable<T>> FindManyAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+		public virtual async ValueTask<IEnumerable<T>> FindManyAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
 		{
 			var query = _officeDbContext.Set<T>().AsNoTracking().Where(expression);
 
@@ -106,7 +115,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="entity">The entity.</param>
 		/// <returns></returns>
 		/// <exception cref="MyWebApiException">A {nameof(T)} with id = '{entity.Id}' already exists</exception>
-		public async ValueTask<Guid> AddAsync(T entity)
+		public virtual async ValueTask<Guid> AddAsync(T entity)
 		{
 			if (await ExistsAsync(entity.Id))
 				throw new MyWebApiException(StatusCodes.Status400BadRequest,
@@ -124,7 +133,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="entity">The entity.</param>
 		/// <returns></returns>
 		/// <exception cref="MyWebApiException">A {nameof(T)} with id = '{entity.Id}' does not exist</exception>
-		public async ValueTask<Guid> UpdateAsync(T entity)
+		public virtual async ValueTask<Guid> UpdateAsync(T entity)
 		{
 			if (!(await ExistsAsync(entity.Id)))
 				throw new MyWebApiException(StatusCodes.Status400BadRequest,
@@ -142,7 +151,7 @@ namespace Project3.DeviceManagement.Data.Repositories
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
 		/// <exception cref="MyWebApiException">A {nameof(T)} with id = '{id}' does not exist</exception>
-		public async ValueTask<Guid> RemoveAsync(Guid id)
+		public virtual async ValueTask<Guid> RemoveAsync(Guid id)
 		{
 			var entity = await _officeDbContext.Set<T>().AsTracking().FirstOrDefaultAsync(e => e.Id == id);
 
