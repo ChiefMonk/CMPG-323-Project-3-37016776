@@ -10,10 +10,6 @@
 *.userosscache
 *.sln.docstates
 
-# Ignore
-src/CMPG-323-Project-3-37016776/appsettings.json
-src/CMPG-323-Project-3-37016776/appsettings.Development.json
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -352,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/src/Project3.DeviceManagement.WebAPP/appsettings.json
