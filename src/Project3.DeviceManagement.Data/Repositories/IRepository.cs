@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Project3.DeviceManagement.Data.Repositories
 {
+	/// <summary>
+	/// IRepository
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public interface IRepository<T> where T : class, IDataEntity
 	{
 		/// <summary>

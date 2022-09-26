@@ -5,29 +5,49 @@ using Project3.DeviceManagement.WebAPP.Models;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
-    public class HomeController : Controller
-    {
-        private readonly ILogger<HomeController> _logger;
+	/// <summary>
+	/// HomeController
+	/// </summary>
+	/// <seealso cref="Project3.DeviceManagement.WebAPP.Controllers.BaseController" />
+	public class HomeController : BaseController
+	{
+		private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HomeController"/> class.
+		/// </summary>
+		/// <param name="logger">The logger.</param>
+		public HomeController(ILogger<HomeController> logger)
+		{
+			_logger = logger;
+		}
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+		/// <summary>
+		/// Indexes this instance.
+		/// </summary>
+		/// <returns></returns>
+		public IActionResult Index()
+		{
+			return View();
+		}
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+		/// <summary>
+		/// Privacies this instance.
+		/// </summary>
+		/// <returns></returns>
+		public IActionResult Privacy()
+		{
+			return View();
+		}
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-    }
+		/// <summary>
+		/// Errors this instance.
+		/// </summary>
+		/// <returns></returns>
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult Error()
+		{
+			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+		}
+	}
 }

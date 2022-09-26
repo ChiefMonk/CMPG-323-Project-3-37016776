@@ -5,76 +5,81 @@ using Project3.DeviceManagement.Data.Entities;
 
 namespace Project3.DeviceManagement.WebAPP.Models.Converters
 {
-    internal static class ZoneConverters
-    {
+	internal static class ZoneConverters
+	{
 		#region ToModel
 
+		/// <summary>
+		/// Converts to model zone.
+		/// </summary>
+		/// <param name="entity">The entity.</param>
+		/// <returns></returns>
 		internal static ModelZone ToModelZone(this EntityZone entity)
-        {
-            if (entity == null)
-                return null;
+		{
+			if (entity == null)
+				return null;
 
-            return new ModelZone
-						{
-							ZoneId = entity.Id,
-                ZoneName = entity.ZoneName,
-                ZoneDescription = entity.ZoneDescription,
-                DateCreated = entity.DateCreated,
-            };
-        }
+			return new ModelZone
+			{
+				ZoneId = entity.Id,
+				ZoneName = entity.ZoneName,
+				ZoneDescription = entity.ZoneDescription,
+				DateCreated = entity.DateCreated,
+			};
+		}
 
-        internal static IList<ModelZone> ToModelZoneCollection(this IEnumerable<EntityZone> entityList)
-        {
-            var dtoList = new List<ModelZone>();
+		/// <summary>
+		/// Converts to model zone collection.
+		/// </summary>
+		/// <param name="entityList">The entity list.</param>
+		/// <returns></returns>
+		internal static IList<ModelZone> ToModelZoneCollection(this IEnumerable<EntityZone> entityList)
+		{
+			var dtoList = new List<ModelZone>();
 
-            if (entityList == null || !entityList.Any())
-                return dtoList;
+			if (entityList == null || !entityList.Any())
+				return dtoList;
 
-            foreach (var entity in entityList)
-            {
-                var dto = entity.ToModelZone();
-                if (dto != null)
-                    dtoList.Add(dto);
-            }
+			foreach (var entity in entityList)
+			{
+				var dto = entity.ToModelZone();
+				if (dto != null)
+					dtoList.Add(dto);
+			}
 
-            return dtoList;
-        }
+			return dtoList;
+		}
 
-        #endregion
+		#endregion
 
-        #region ToEntity
+		#region ToEntity
 
-        internal static EntityZone ToEntityZone(this ModelZone dto)
-        {
-	        if (dto == null)
-		        return null;
+		/// <summary>
+		/// Converts to entity zone.
+		/// </summary>
+		/// <param name="dto">The dto.</param>
+		/// <param name="isCreate">if set to <c>true</c> [is create].</param>
+		/// <returns></returns>
+		internal static EntityZone ToEntityZone(this ModelZone dto, bool isCreate = false)
+		{
+			if (dto == null)
+				return null;
 
-	        if (dto.ZoneId == Guid.Empty)
-	        {
-		        dto.ZoneId = Guid.NewGuid();
-		        dto.DateCreated = DateTime.Now;
-	        }
+			if (dto.ZoneId == Guid.Empty)
+				dto.ZoneId = Guid.NewGuid();
 
-	        return new EntityZone
-	        {
-		        Id = dto.ZoneId,
-		        ZoneName = dto.ZoneName,
-		        ZoneDescription = dto.ZoneDescription,
-		        DateCreated = dto.DateCreated,
-	        };
-        }
+			if (isCreate)
+				dto.DateCreated = DateTime.UtcNow.AddHours(2);
 
-        internal static EntityZone ToEntityZone(this ModelZone dto, EntityZone currentEntity)
-        {
-            if (dto == null)
-                return null;
+			return new EntityZone
+			{
+				Id = dto.ZoneId,
+				ZoneName = dto.ZoneName,
+				ZoneDescription = dto.ZoneDescription,
+				DateCreated = dto.DateCreated,
+			};
+		}
 
-            currentEntity.ZoneName = dto.ZoneName;
-            currentEntity.ZoneDescription = dto.ZoneDescription;
-
-            return currentEntity;
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

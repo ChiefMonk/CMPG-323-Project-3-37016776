@@ -2,7 +2,11 @@
 
 namespace Project3.DeviceManagement.Data.Repositories.Device
 {
-    public interface IDeviceRepository : IRepository<EntityDevice>
+	/// <summary>
+	/// IDeviceRepository
+	/// </summary>
+	/// <seealso cref="Project3.DeviceManagement.Data.Repositories.IRepository&lt;Project3.DeviceManagement.Data.Entities.EntityDevice&gt;" />
+	public interface IDeviceRepository : IRepository<EntityDevice>
     {
     }
 }
