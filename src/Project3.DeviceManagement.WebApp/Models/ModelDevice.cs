@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project3.DeviceManagement.WebAPP.Models
 {
@@ -69,6 +70,7 @@ namespace Project3.DeviceManagement.WebAPP.Models
 		/// The date created.
 		/// </value>
 		[DisplayName("Date Created")]
+		[DataType(DataType.DateTime), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
 		public DateTime DateCreated { get; set; }
 
 		/// <summary>
