@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Internal;
 using Project3.DeviceManagement.Data.Exceptions;
 using Project3.DeviceManagement.Data.Repositories.Category;
 using Project3.DeviceManagement.Data.Repositories.Device;
@@ -21,7 +22,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 		private readonly ICategoryRepository _categoryRepository;
 		private readonly IZoneRepository _zoneRepository;
 		private readonly IDeviceRepository _deviceRepository;
-
+		private static Random rand = new Random();
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DevicesController"/> class.
 		/// </summary>

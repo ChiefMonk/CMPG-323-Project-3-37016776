@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.WebEncoders.Testing;
 using Project3.DeviceManagement.Data.Exceptions;
 using Project3.DeviceManagement.Data.Repositories.Category;
 using Project3.DeviceManagement.WebAPP.Models;
