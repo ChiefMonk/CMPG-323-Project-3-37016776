@@ -6,6 +6,7 @@ using Project3.DeviceManagement.WebAPP.Models;
 using Project3.DeviceManagement.WebAPP.Models.Converters;
 using Project3.DeviceManagement.Data.Repositories.Zone;
 using Project3.DeviceManagement.Data.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Project3.DeviceManagement.WebAPP.Controllers
 {
@@ -13,6 +14,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	/// Zones Controller
 	/// </summary>
 	/// <seealso cref="Project3.DeviceManagement.WebAPP.Controllers.BaseController" />
+	[Authorize]
 	public class ZonesController : BaseController
 	{
 		private readonly IZoneRepository _zoneRepository;
