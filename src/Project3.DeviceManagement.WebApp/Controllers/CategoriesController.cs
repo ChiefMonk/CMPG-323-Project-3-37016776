@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.WebEncoders.Testing;
 using Project3.DeviceManagement.Data.Exceptions;
 using Project3.DeviceManagement.Data.Repositories.Category;
 using Project3.DeviceManagement.WebAPP.Models;
@@ -14,6 +14,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	/// CategoriesController
 	/// </summary>
 	/// <seealso cref="Project3.DeviceManagement.WebAPP.Controllers.BaseController" />
+	[Authorize]
 	public class CategoriesController : BaseController
 	{
 		private readonly ICategoryRepository _categoryRepository;

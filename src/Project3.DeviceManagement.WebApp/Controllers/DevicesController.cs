@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -17,6 +18,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 	/// DevicesController
 	/// </summary>
 	/// <seealso cref="Project3.DeviceManagement.WebAPP.Controllers.BaseController" />
+	[Authorize]
 	public class DevicesController : BaseController
 	{
 		private readonly ICategoryRepository _categoryRepository;
@@ -45,6 +47,7 @@ namespace Project3.DeviceManagement.WebAPP.Controllers
 		/// </summary>
 		/// <param name="loadMessage">if set to <c>true</c> [load message].</param>
 		/// <returns></returns>
+		
 		public async Task<IActionResult> Index(bool loadMessage = true)
 		{
 			try
